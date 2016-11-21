@@ -1,0 +1,156 @@
+﻿<!DOCTYPE html>
+
+<html>
+	<head>
+		<script src="three.min.js"></script>
+		<script src="human.js"></script>
+	</head>
+
+	<body>
+		<h1>"Hagoromo and Goku"<br><small>ф.н. 81250 &ndash; група 8 &ndash; Стоян Томицин</small></h1>
+
+		<script>
+			// нагласяване на цвета и центрирането на текста с имената ви
+			document.getElementsByTagName('h1')[0].style = 'color:black; text-align:center; font-size:1.75em';
+
+			// рисувателно поле на цял екран
+			renderer = new THREE.WebGLRenderer({antialias:true});
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+			renderer.setClearColor("white");
+			renderer.domElement.style = 'width:100%; height:100%; position:fixed; top:0; left:0; z-index:-1;';
+
+			// сцена и камера
+			scene = new THREE.Scene();
+			camera = new THREE.PerspectiveCamera( 30, window.innerWidth/window.innerHeight, 0.1, 2000 );
+			camera.position.set(0,3,220);
+
+			var weapon = new THREE.Object3D();
+			scene.add( weapon );
+
+			var geometry = new THREE.CylinderGeometry( 0.5, 0.5, 64 );
+			var material = new THREE.MeshPhongMaterial({ color: "black" });
+			var staff = new THREE.Mesh( geometry, material );
+			staff.position.set( -21, 2, 0 );
+			weapon.add( staff );
+
+			function Torus( size1, size2, x, y, z, rot1, rot2 )
+			{
+				var geometry = new THREE.TorusGeometry( size1, size2, 32, 32 );
+				var material = new THREE.MeshPhongMaterial({ color: "black" });
+				var ring = new THREE.Mesh( geometry, material );
+				ring.position.set( x, y, z );
+				ring.rotation.x = rot1;
+				ring.rotation.y = rot2;
+				return ring;
+			}
+			var ring1 = Torus( 6, 0.6, -21, 37.5, 0, 0, 0 )
+			weapon.add( ring1 );
+
+			var ring2 = Torus( 2.5, 0.4, -19, 30.5, 0, 100, -150 )
+			weapon.add( ring2 );
+
+			var ring3 = Torus( 2.5, 0.4, -17.5, 31, 0, 100, -100 )
+			weapon.add( ring3 );
+
+			var ring4 = Torus( 2.5, 0.4, -24, 30.9, 0, 100, 100 )
+			weapon.add( ring4 );
+
+			var MyCurve = THREE.Curve.create(
+				function ( ) {},
+				function (t) {
+					var x = 6*Math.cos(4*t);
+					var y = 6*Math.sin(4*t);
+					var z = 0;
+					return new THREE.Vector3(x,y,z);
+				}
+			);
+
+			var geometry = new THREE.TubeGeometry(new MyCurve(),60,0.6,32);
+			var material = new THREE.MeshPhongMaterial({ color: 'black' });
+			var surface = new THREE.Mesh( geometry, material );
+			surface.rotation.z = 1.35*Math.PI;
+			surface.position.set( -22, -33, 0 );
+			weapon.add( surface );
+
+			var balls = new THREE.Object3D();
+			scene.add( balls );
+
+			function Paths( size, x, y, z )
+			{
+				var geometry = new THREE.SphereGeometry( size, 32, 32 );
+				var material = new THREE.MeshPhongMaterial({ color: 'black' });
+				var sphere = new THREE.Mesh( geometry, material );
+				sphere.position.set( x, y, z );
+				return sphere;
+			}
+
+			var sphere2 = Paths( 2.5, 20.6, 0, 0 );
+			balls.add( sphere2 );
+
+			var sphere3 = Paths( 2.5, -20.6, 0, 0 );
+			balls.add( sphere3 );
+
+			var sphere4 = Paths( 2.5, 0, 20.6, 0 );
+			balls.add( sphere4 );
+
+			var sphere5 = Paths( 2.5, 0, -20.6, 0 );
+			balls.add( sphere5 );
+
+			var sphere6 = Paths( 2.5, 14.5, 15, 0 );
+			balls.add( sphere6 );
+
+			var sphere7 = Paths( 2.5, 14.5, -15, 0 );
+			balls.add( sphere7 );
+
+			var sphere8 = Paths( 2.5, -14.5, 15, 0 );
+			balls.add( sphere8 );
+
+			var sphere9 = Paths( 2.5, -14.5, -15, 0 );
+			balls.add( sphere9 );
+      // светлини
+			var light = new THREE.DirectionalLight('lightblue',0.8);
+			light.position.set(0,1,4);
+			scene.add(light);
+			scene.add( new THREE.AmbientLight('white',0.4) );
+
+			// функция за анимиране на сцената
+			var t = 0; // време
+			function drawFrame()
+			{
+				requestAnimationFrame( drawFrame );
+				if (animate) animate(t++);
+				renderer.render( scene, camera );
+			}
+
+			// човече
+			манекен = мъжествен();
+			// тук се описват статичните елементи на позата
+      манекен.rotation.y = 1.5*Math.PI;
+			// анимация на човечето
+			animate = function (t)
+			{
+				// тук се описват динамичните елементи на позата
+				// като променливата t е номер на кадър, като се
+				// очаква 1 секунда да е приблизително 60 кадъра
+				манекен.врат.врът(0,10*sin(5*t)-1,0);
+				манекен.глава.врът(0,10*sin(5*t)-1,0);
+				манекен.л_ръка.врът(0,0,-80);
+        манекен.л_китка.врът(0,30*sin(5*t)-10,-90);
+				манекен.д_ръка.врът(-80,0,0);
+				манекен.д_лакът.врът(-70,-80,-70);
+				манекен.д_китка.врът(0,0,90);
+			//	scene.rotation.y += 0.010;
+				balls.rotation.z += 0.010;
+				balls.position.set( 0, 14, -6.5 );
+				weapon.position.set( -5.8, 20.5, 1 );
+				weapon.rotation.x += 0.2;
+
+
+
+			}
+
+			drawFrame();
+		</script>
+	</body>
+</html>
